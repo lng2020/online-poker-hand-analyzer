@@ -1,4 +1,4 @@
-/* copied from https://github.com/GoogleChromeLabs/wasm-bindgen-rayon */
+/* copied from https://github.com/RReverser/wasm-bindgen-rayon */
 
 /*
  * Copyright 2022 Google Inc. All Rights Reserved.
@@ -19,8 +19,9 @@
 #[cfg(not(target_feature = "atomics"))]
 compile_error!("Did you forget to enable `atomics` and `bulk-memory` features as outlined in wasm-bindgen-rayon README?");
 
+use crossbeam_channel::{bounded, Receiver, Sender};
 use js_sys::Promise;
-use spmc::{channel, Receiver, Sender};
+use rayon::{ThreadBuilder, ThreadPoolBuilder};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
 
@@ -31,24 +32,25 @@ use wasm_bindgen::JsValue;
 #[doc(hidden)]
 pub struct wbg_rayon_PoolBuilder {
     num_threads: usize,
-    sender: Sender<rayon::ThreadBuilder>,
-    receiver: Receiver<rayon::ThreadBuilder>,
+    sender: Sender<ThreadBuilder>,
+    receiver: Receiver<ThreadBuilder>,
 }
 
-#[wasm_bindgen(module = "/workerHelpers.js")]
+#[wasm_bindgen(module = "/src/workerHelpers.js")]
 extern "C" {
     #[wasm_bindgen(js_name = startWorkers)]
     fn start_workers(module: JsValue, memory: JsValue, builder: wbg_rayon_PoolBuilder) -> Promise;
-    #[wasm_bindgen(js_name = terminateWorkers)]
-    fn terminate_workers() -> Promise;
 }
 
-pub static mut THREAD_POOL: Option<rayon::ThreadPool> = None;
+fn _ensure_worker_emitted() {
+    // Just ensure that the worker is emitted into the output folder, but don't actually use the URL.
+    wasm_bindgen::link_to!(module = "/src/workerHelpers.worker.js");
+}
 
 #[wasm_bindgen]
 impl wbg_rayon_PoolBuilder {
     fn new(num_threads: usize) -> Self {
-        let (sender, receiver) = channel();
+        let (sender, receiver) = bounded(num_threads);
         Self {
             num_threads,
             sender,
@@ -61,7 +63,7 @@ impl wbg_rayon_PoolBuilder {
         self.num_threads
     }
 
-    pub fn receiver(&self) -> *const Receiver<rayon::ThreadBuilder> {
+    pub fn receiver(&self) -> *const Receiver<ThreadBuilder> {
         &self.receiver
     }
 
@@ -69,36 +71,27 @@ impl wbg_rayon_PoolBuilder {
     // Important: it must take `self` by reference, otherwise
     // `start_worker_thread` will try to receive a message on a moved value.
     pub fn build(&mut self) {
-        unsafe {
-            THREAD_POOL = Some(
-                rayon::ThreadPoolBuilder::new()
-                    .num_threads(self.num_threads)
-                    // We could use postMessage here instead of Rust channels,
-                    // but currently we can't due to a Chrome bug that will cause
-                    // the main thread to lock up before it even sends the message:
-                    // https://bugs.chromium.org/p/chromium/issues/detail?id=1075645
-                    .spawn_handler(move |thread| {
-                        // Note: `send` will return an error if there are no receivers.
-                        // We can use it because all the threads are spawned and ready to accept
-                        // messages by the time we call `build()` to instantiate spawn handler.
-                        self.sender.send(thread).unwrap_throw();
-                        Ok(())
-                    })
-                    .build()
-                    .unwrap_throw(),
-            );
-        }
+        ThreadPoolBuilder::new()
+            .num_threads(self.num_threads)
+            // We could use postMessage here instead of Rust channels,
+            // but currently we can't due to a Chrome bug that will cause
+            // the main thread to lock up before it even sends the message:
+            // https://bugs.chromium.org/p/chromium/issues/detail?id=1075645
+            .spawn_handler(move |thread| {
+                // Note: `send` will return an error if there are no receivers.
+                // We can use it because all the threads are spawned and ready to accept
+                // messages by the time we call `build()` to instantiate spawn handler.
+                self.sender.send(thread).unwrap_throw();
+                Ok(())
+            })
+            .build_global()
+            .unwrap_throw();
     }
 }
 
 #[wasm_bindgen(js_name = initThreadPool)]
 #[doc(hidden)]
 pub fn init_thread_pool(num_threads: usize) -> Promise {
-    unsafe {
-        if THREAD_POOL.is_some() {
-            panic!("Thread pool is already initialized");
-        }
-    }
     start_workers(
         wasm_bindgen::module(),
         wasm_bindgen::memory(),
@@ -106,26 +99,13 @@ pub fn init_thread_pool(num_threads: usize) -> Promise {
     )
 }
 
-#[wasm_bindgen(js_name = exitThreadPool)]
-#[doc(hidden)]
-pub fn exit_thread_pool() -> Promise {
-    unsafe {
-        if THREAD_POOL.is_none() {
-            panic!("Thread pool is not initialized");
-        }
-        let promise = terminate_workers();
-        THREAD_POOL = None;
-        promise
-    }
-}
-
 #[wasm_bindgen]
 #[allow(clippy::not_unsafe_ptr_arg_deref)]
 #[doc(hidden)]
-pub fn wbg_rayon_start_worker(receiver: *const Receiver<rayon::ThreadBuilder>)
+pub fn wbg_rayon_start_worker(receiver: *const Receiver<ThreadBuilder>)
 where
     // Statically assert that it's safe to accept `Receiver` from another thread.
-    Receiver<rayon::ThreadBuilder>: Sync,
+    Receiver<ThreadBuilder>: Sync,
 {
     // This is safe, because we know it came from a reference to PoolBuilder,
     // allocated on the heap by wasm-bindgen and dropped only once all the

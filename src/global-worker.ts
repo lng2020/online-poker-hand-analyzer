@@ -7,7 +7,6 @@ export let handler: Comlink.Remote<Handler> | null = null;
 
 export const init = async (numThreads: number) => {
   if (worker && proxy) {
-    await proxy.beforeTerminate();
     const oldWorker = worker;
     setTimeout(() => oldWorker.terminate(), 1000);
   }

@@ -1,22 +1,5 @@
-extern crate wasm_bindgen;
 use postflop_solver::*;
 use wasm_bindgen::prelude::*;
-
-#[cfg(not(feature = "rayon"))]
-struct DummyPool;
-#[cfg(not(feature = "rayon"))]
-static mut THREAD_POOL: Option<DummyPool> = None;
-#[cfg(not(feature = "rayon"))]
-impl DummyPool {
-    fn install<OP: FnOnce() -> R, R: Default>(&self, _op: OP) -> R {
-        R::default()
-    }
-}
-
-#[cfg(feature = "rayon")]
-mod rayon_adapter;
-#[cfg(feature = "rayon")]
-use rayon_adapter::THREAD_POOL;
 
 #[wasm_bindgen]
 pub struct GameManager {
@@ -212,33 +195,15 @@ impl GameManager {
     }
 
     pub fn solve_step(&self, current_iteration: u32) {
-        unsafe {
-            if let Some(pool) = THREAD_POOL.as_ref() {
-                pool.install(|| solve_step(&self.game, current_iteration));
-            } else {
-                solve_step(&self.game, current_iteration);
-            }
-        }
+        solve_step(&self.game, current_iteration);
     }
 
     pub fn exploitability(&self) -> f32 {
-        unsafe {
-            if let Some(pool) = THREAD_POOL.as_ref() {
-                pool.install(|| compute_exploitability(&self.game))
-            } else {
-                compute_exploitability(&self.game)
-            }
-        }
-    }
+        compute_exploitability(&self.game)
+    } 
 
     pub fn finalize(&mut self) {
-        unsafe {
-            if let Some(pool) = THREAD_POOL.as_ref() {
-                pool.install(|| finalize(&mut self.game));
-            } else {
-                finalize(&mut self.game);
-            }
-        }
+        finalize(&mut self.game);
     }
 
     pub fn apply_history(&mut self, history: &[usize]) {

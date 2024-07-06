@@ -148,15 +148,8 @@ const initHandler = async (num_threads: number) => {
   return Comlink.proxy(createHandler(mod));
 };
 
-const beforeTerminate = async () => {
-  if (isMTSupported()) {
-    await (mod as ModMT).exitThreadPool();
-  }
-};
-
 export interface WorkerApi {
   initHandler: typeof initHandler;
-  beforeTerminate: typeof beforeTerminate;
 }
 
-Comlink.expose({ initHandler, beforeTerminate });
+Comlink.expose({ initHandler });
