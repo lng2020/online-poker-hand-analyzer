@@ -12,8 +12,8 @@
     "wasm": "npm run wasm:range && npm run wasm:tree && npm run wasm:solver-st && npm run wasm:solver-mt",
     "wasm:range": "rustup run nightly wasm-pack build --out-dir ../../pkg/range rust/range",
     "wasm:tree": "rustup run nightly wasm-pack build --out-dir ../../pkg/tree rust/tree",
-    "wasm:solver-st": "rustup run nightly wasm-pack build --target web --out-dir ../../pkg/solver-st rust/solver-st",
-    "wasm:solver-mt": "rustup run nightly wasm-pack build --target web --out-dir ../../pkg/solver-mt rust/solver-mt"
+    "wasm:solver-st": "RUSTFLAGS='-C target-feature=+atomics,+bulk-memory,+mutable-globals' rustup run nightly wasm-pack build --target web --out-dir ../../pkg/solver-st rust/solver-st",
+    "wasm:solver-mt": "RUSTFLAGS='-C target-feature=+atomics,+bulk-memory,+mutable-globals' rustup run nightly wasm-pack build --target web --out-dir ../../pkg/solver-mt rust/solver-mt"
   },
   "dependencies": {
     "@heroicons/vue": "^2.0.18",
