@@ -62,8 +62,8 @@ export const cardPairCellIndex = (card1: number, card2: number) => {
     index: isSuited
       ? 3 - hs
       : hr === lr
-      ? 6 - ((ls * (5 - ls)) / 2 + hs)
-      : 11 - (3 * hs + ls - +(hs < ls)),
+        ? 6 - ((ls * (5 - ls)) / 2 + hs)
+        : 11 - (3 * hs + ls - +(hs < ls)),
   };
 };
 

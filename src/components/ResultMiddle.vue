@@ -10,8 +10,8 @@
             ? 'bg-blue-100 underline'
             : 'hover:bg-blue-100'
           : displayMode === mode
-          ? 'bg-red-100 underline'
-          : 'hover:bg-red-100')
+            ? 'bg-red-100 underline'
+            : 'hover:bg-red-100')
       "
       @click="updateDisplayMode(mode)"
     >

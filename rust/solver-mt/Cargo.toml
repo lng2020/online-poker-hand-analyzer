@@ -9,12 +9,12 @@ license = "AGPL-3.0-or-later"
 crate-type = ["cdylib"]
 
 [dependencies]
-js-sys = "0.3.64"
+js-sys = "0.3.69"
 postflop-solver = { git = "https://github.com/b-inary/postflop-solver", features = ["custom-alloc", "rayon"], default-features = false }
 rayon = "1.10.0"
-wasm-bindgen-rayon = "1.0"
+wasm-bindgen-rayon = "1.2"
 spmc = "0.3.0"
-wasm-bindgen = "0.2.87"
+wasm-bindgen = "0.2.92"
 crossbeam-channel = "0.5.13"
 
 [profile.release]
@@ -23,3 +23,9 @@ lto = true
 
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = ["-O4"]
+
+[target.wasm32-unknown-unknown]
+rustflags = ["-C", "target-feature=+atomics,+bulk-memory,+mutable-globals"]
+
+[unstable]
+build-std = ["panic_abort", "std"]

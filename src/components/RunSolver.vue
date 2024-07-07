@@ -237,10 +237,10 @@
           store.isSolverRunning
             ? "Solver running..."
             : store.isFinalizing
-            ? "Finalizing..."
-            : store.isSolverPaused
-            ? "Solver paused."
-            : "Solver finished."
+              ? "Finalizing..."
+              : store.isSolverPaused
+                ? "Solver paused."
+                : "Solver finished."
         }}
       </div>
       {{ iterationText }}

@@ -167,14 +167,14 @@ export const renameItem = async (
               { name3: newName },
             ]
           : item.name2 !== ""
-          ? [
-              "[name0+name1+name2]",
-              [item.name0, item.name1, item.name2],
-              { name2: newName },
-            ]
-          : item.name1 !== ""
-          ? ["[name0+name1]", [item.name0, item.name1], { name1: newName }]
-          : ["name0", item.name0, { name0: newName }];
+            ? [
+                "[name0+name1+name2]",
+                [item.name0, item.name1, item.name2],
+                { name2: newName },
+              ]
+            : item.name1 !== ""
+              ? ["[name0+name1]", [item.name0, item.name1], { name1: newName }]
+              : ["name0", item.name0, { name0: newName }];
 
       // update
       return (await table.where(index).equals(key).modify(modifier)) > 0;
@@ -243,8 +243,8 @@ export const deleteItem = async (store: string, item: DbItem | DbGroup) => {
           item.name2 !== ""
             ? ["[name0+name1+name2]", [item.name0, item.name1, item.name2]]
             : item.name1 !== ""
-            ? ["[name0+name1]", [item.name0, item.name1]]
-            : ["name0", item.name0];
+              ? ["[name0+name1]", [item.name0, item.name1]]
+              : ["name0", item.name0];
 
         // delete
         return (await table.where(index).equals(key).delete()) > 0;

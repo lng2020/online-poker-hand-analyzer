@@ -77,8 +77,8 @@
                   (column.type === 'card'
                     ? '4'
                     : column.type === 'bar'
-                    ? '6'
-                    : '3.5') + 'rem',
+                      ? '6'
+                      : '3.5') + 'rem',
               }"
               @click="column.type !== 'bar' && sortBy(columnIndex(column))"
             >

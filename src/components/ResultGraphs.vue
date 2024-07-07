@@ -267,12 +267,17 @@ export default defineComponent({
 
     const chartOptions = computed((): ChartOptions<"line"> => {
       const content = props.displayOptions.contentGraphs;
-      const styleY = content === "ev" ? "decimal" : "percent";
-      const formatX = { style: "percent", minimumFractionDigits: 0 };
+      const formatX = {
+        callback: (value: number | string) =>
+          typeof value === "number" ? (value * 100).toFixed(0) + "%" : "",
+      };
       const formatY = {
-        style: styleY,
-        useGrouping: false,
-        minimumFractionDigits: 0,
+        callback: (value: number | string) => {
+          if (typeof value !== "number") return "";
+          return content === "ev"
+            ? value.toString()
+            : (value * 100).toFixed(0) + "%";
+        },
       };
 
       return {
@@ -284,7 +289,7 @@ export default defineComponent({
         scales: {
           x: {
             type: "linear",
-            ticks: { format: formatX },
+            ticks: formatX,
             afterFit(axis) {
               chartWidth.value = axis.width;
             },
@@ -293,9 +298,7 @@ export default defineComponent({
             min: content === "eq" ? 0 : undefined,
             max: content === "eq" ? 1 : undefined,
             suggestedMin: content === "ev" ? 0 : undefined,
-            ticks: {
-              format: formatY,
-            },
+            ticks: formatY,
             afterFit(axis) {
               axis.width = 52;
             },

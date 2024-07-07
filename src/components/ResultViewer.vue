@@ -9,10 +9,10 @@
         !store.hasSolverRun
           ? "Solver has not run."
           : store.isSolverRunning
-          ? "Solver running..."
-          : store.isFinalizing
-          ? "Finalizing..."
-          : "Solver paused."
+            ? "Solver running..."
+            : store.isFinalizing
+              ? "Finalizing..."
+              : "Solver paused."
       }}
     </div>
   </div>

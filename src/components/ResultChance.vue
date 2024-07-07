@@ -198,8 +198,8 @@ export default defineComponent({
           options.chartChance === "eq"
             ? reports.equity[playerIndex]
             : options.chartChance === "ev"
-            ? reports.ev[playerIndex]
-            : reports.eqr[playerIndex];
+              ? reports.ev[playerIndex]
+              : reports.eqr[playerIndex];
         datasets = Array.from({ length: 4 }, (_, suit) => ({
           data: Array.from(
             { length: 13 },
@@ -216,10 +216,17 @@ export default defineComponent({
 
     const chartOptions = computed((): ChartOptions<"bar"> => {
       const option = props.displayOptions.chartChance;
-      const style = ["strategy", "eq", "eqr"].includes(option)
-        ? "percent"
-        : "decimal";
-      const format = { style, useGrouping: false, minimumFractionDigits: 0 };
+      const callback = (value: number | string) => {
+        if (typeof value !== "number") return "";
+        const style = ["strategy", "eq", "eqr"].includes(option)
+          ? "percent"
+          : "decimal";
+        if (style === "percent") {
+          return (value * 100).toFixed(0) + "%";
+        } else {
+          return value.toString();
+        }
+      };
 
       const titleText =
         props.displayPlayer.toUpperCase() +
@@ -242,7 +249,9 @@ export default defineComponent({
             stacked: true,
             min: ["ev", "eqr"].includes(option) ? undefined : 0,
             max: option === "strategy" ? 1 : undefined,
-            ticks: { format },
+            ticks: {
+              callback: callback,
+            },
             afterFit(axis) {
               axis.width = 52;
             },

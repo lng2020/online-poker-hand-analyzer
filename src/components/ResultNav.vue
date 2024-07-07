@@ -17,12 +17,12 @@
         (spot.index === selectedChanceIndex
           ? 'border-red-600 cursor-default'
           : spot.index === selectedSpotIndex
-          ? 'border-blue-600 cursor-default'
-          : spot.type === 'chance' &&
-            isSelectedChanceSkipped &&
-            spot.index > selectedChanceIndex
-          ? 'border-gray-400 cursor-default'
-          : 'border-gray-400 cursor-pointer')
+            ? 'border-blue-600 cursor-default'
+            : spot.type === 'chance' &&
+                isSelectedChanceSkipped &&
+                spot.index > selectedChanceIndex
+              ? 'border-gray-400 cursor-default'
+              : 'border-gray-400 cursor-pointer')
       "
       @click="selectSpot(spot.index, false)"
     >
@@ -34,8 +34,8 @@
             (spot.index === selectedChanceIndex
               ? ''
               : isSelectedChanceSkipped && spot.index > selectedChanceIndex
-              ? 'opacity-70'
-              : 'group-hover:opacity-100 opacity-70')
+                ? 'opacity-70'
+                : 'group-hover:opacity-100 opacity-70')
           "
         >
           {{ spot.player.toUpperCase() }}
@@ -117,8 +117,8 @@
               spot.index === selectedChanceIndex
                 ? ''
                 : isSelectedChanceSkipped && spot.index > selectedChanceIndex
-                ? 'opacity-70'
-                : 'group-hover:opacity-100 opacity-70'
+                  ? 'opacity-70'
+                  : 'group-hover:opacity-100 opacity-70'
             "
           >
             <div>Pot {{ spot.pot }}</div>
