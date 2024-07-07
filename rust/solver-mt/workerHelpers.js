@@ -1,4 +1,4 @@
-/* copied from https://github.com/GoogleChromeLabs/wasm-bindgen-rayon */
+/* copied from https://github.com/RReverser/wasm-bindgen-rayon */
 
 /*
  * Copyright 2022 Google Inc. All Rights Reserved.
