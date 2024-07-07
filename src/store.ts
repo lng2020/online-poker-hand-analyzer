@@ -4,7 +4,7 @@ import { sanitizeBetString } from "./utils";
 export type NavView = "solver" | "results";
 
 export type SideView =
-  | "about"
+  | "hand-action"
   | "oop-range"
   | "ip-range"
   | "board"
@@ -88,9 +88,9 @@ export const saveConfig = () => {
 export const useStore = defineStore("app", {
   state: () => ({
     navView: "solver" as NavView,
-    sideView: "about" as SideView,
+    sideView: "hand-action" as SideView,
     headers: {
-      about: ["Welcome to WASM Postflop!"],
+      "hand-action": ["Hand Action"],
       "oop-range": ["OOP Range"],
       "ip-range": ["IP Range"],
       board: ["Board"],

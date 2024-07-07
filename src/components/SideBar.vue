@@ -1,9 +1,11 @@
 <template>
   <aside class="flex flex-col shrink-0 w-56 my-4 overflow-y-auto border-r-2">
-    <button :class="itemStyle('about')" @click="store.sideView = 'about'">
-      About
+    <button
+      :class="itemStyle('hand-action')"
+      @click="store.sideView = 'hand-action'"
+    >
+      Hand Action
     </button>
-
     <button
       :class="itemStyle('oop-range')"
       @click="store.sideView = 'oop-range'"
