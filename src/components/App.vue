@@ -8,16 +8,16 @@
       style="height: calc(100% - 2.5rem)"
     >
       <div class="flex" style="height: calc(100% - 2rem)">
-        <div class="w-1/3 p-4 bg-gray-100">
+        <div class="w-1/4 p-4 bg-gray-100">
           <HandUploader />
           <HandList />
         </div>
 
-        <div class="w-2/3 flex flex-col" style="height: calc(100% - 2rem)">
+        <div class="w-3/4 flex flex-col" style="height: calc(100% - 2rem)">
           <SideBar class="flex-none" />
 
           <div
-            class="flex-grow my-4 px-6 pt-2 overflow-y-auto"
+            class="my-4 px-6 pt-2 overflow-y-auto"
             style="height: calc(100% - 2rem)"
           >
             <div class="flex">
@@ -31,22 +31,22 @@
               </div>
             </div>
 
-            <div v-show="store.sideView === 'hand-action'">
+            <div v-show="store.sideView === 'hand-action'" class="flex-grow">
               <HandActionViewer />
             </div>
-            <div v-show="store.sideView === 'oop-range'">
+            <div v-show="store.sideView === 'oop-range'" class="flex-grow">
               <RangeEditor :player="0" />
             </div>
-            <div v-show="store.sideView === 'ip-range'">
+            <div v-show="store.sideView === 'ip-range'" class="flex-grow">
               <RangeEditor :player="1" />
             </div>
-            <div v-show="store.sideView === 'board'">
+            <div v-show="store.sideView === 'board'" class="flex-grow">
               <BoardSelector />
             </div>
-            <div v-show="store.sideView === 'tree-config'">
+            <div v-show="store.sideView === 'tree-config'" class="flex-grow">
               <TreeConfig />
             </div>
-            <div v-show="store.sideView === 'run-solver'">
+            <div v-show="store.sideView === 'run-solver'" class="flex-grow">
               <RunSolver />
             </div>
           </div>
