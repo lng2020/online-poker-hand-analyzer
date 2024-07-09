@@ -5,12 +5,13 @@
   "description": "Postflop solver powered by WebAssembly",
   "license": "AGPL-3.0-or-later",
   "scripts": {
-    "build": "webpack",
-    "serve": "node server.js",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "lint": "eslint src/**/*.{ts,vue}",
     "format": "prettier --write src/**/*.{ts,vue}",
     "wasm": "npm run wasm:range && npm run wasm:tree && npm run wasm:solver-st && npm run wasm:solver-mt",
-    "wasm:range": "rustup run nightly wasm-pack build --out-dir ../../pkg/range rust/range",
+"wasm:range": "rustup run nightly wasm-pack build --out-dir ../../pkg/range rust/range",
     "wasm:tree": "rustup run nightly wasm-pack build --out-dir ../../pkg/tree rust/tree",
     "wasm:solver-st": "rustup run nightly wasm-pack build --target web --out-dir ../../pkg/solver-st rust/solver-st",
     "wasm:solver-mt": "rustup run nightly wasm-pack build --target web --out-dir ../../pkg/solver-mt rust/solver-mt"
@@ -29,27 +30,19 @@
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.10.3",
     "@tailwindcss/forms": "^0.5.7",
+    "@vitejs/plugin-vue": "^5.0.5",
     "@vue/eslint-config-prettier": "^9.0.0",
     "@vue/eslint-config-typescript": "^13.0.0",
     "autoprefixer": "^10.4.19",
-    "clean-webpack-plugin": "^4.0.0",
-    "copy-webpack-plugin": "^12.0.2",
-    "css-loader": "^7.1.2",
     "cssnano": "^7.0.4",
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^9.27.0",
     "express": "^4.19.2",
-    "html-webpack-plugin": "^5.6.0",
-    "mini-css-extract-plugin": "^2.9.0",
     "postcss": "^8.4.39",
-    "postcss-loader": "^8.1.1",
     "prettier": "^3.3.2",
     "tailwindcss": "^3.4.4",
-    "ts-loader": "^9.5.1",
     "typescript": "^5.5.3",
-    "url-loader": "^4.1.1",
-    "vue-loader": "^17.4.2",
-    "webpack": "^5.92.1",
-    "webpack-cli": "^5.1.4"
+    "vite": "^5.3.3",
+    "vite-plugin-wasm": "^3.3.0"
   }
 }
